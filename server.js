@@ -148,4 +148,45 @@ app.get('*', async (c) => {
         const recurringHeight = origH * scale;
 
         const logoX = destX + (destWidth - newLogoWidth) / 2;
-        const logoY = destY + (destHeight - recurring
+        const logoY = destY + (destHeight - recurringHeight) / 2;
+        const padding = 5;
+
+        // Nền trắng cho logo
+        svg += `<rect x="${logoX - padding}" y="${logoY - padding}" width="${newLogoWidth + (padding * 2)}" height="${recurringHeight + (padding * 2)}" fill="#FFFFFF"/>`;
+        // Ảnh logo
+        svg += `<image href="${logoBase64}" x="${logoX}" y="${logoY}" width="${newLogoWidth}" height="${recurringHeight}"/>`;
+
+        // Lớp 6: Text thông tin
+        let textLines = [
+            "Tên chủ TK: LE THANH LAM",
+            "Số TK: 0935147989",
+            "CTCP Dịch Vụ Di Động Trực Tuyến (MoMo)"
+        ];
+
+        if (amount > 0) {
+            const formattedAmount = new Intl.NumberFormat('vi-VN').format(amount);
+            textLines.unshift("Số tiền: " + formattedAmount + " VND");
+        }
+
+        const secondToLastIndex = textLines.length - 2;
+        const midX = frameWidth / 2; 
+
+        textLines.forEach((line, index) => {
+            const fontWeight = (index === secondToLastIndex) ? 'bold' : 'normal';
+            svg += `<text x="${midX}" y="${textStartY}" font-family="Arial, sans-serif" font-weight="${fontWeight}" font-size="23" text-anchor="middle" dominant-baseline="hanging" fill="#000000">${line}</text>`;
+            textStartY += lineSpacing;
+        });
+
+        svg += `</svg>`;
+
+        // Trả về kết quả
+        c.header('Content-Type', 'image/svg+xml');
+        return c.body(svg);
+
+    } catch (error) {
+        console.error(error);
+        return c.text('Lỗi: ' + error.message, 500);
+    }
+});
+
+export default app;
