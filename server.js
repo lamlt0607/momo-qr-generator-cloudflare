@@ -72,8 +72,8 @@ app.get('*', async (c) => {
         const frameHeight = 800;
 
         // 1. Tọa độ của vùng mã QR 
-        const destX = 160;       // Đẩy mạnh sang trái (Cũ là 140)
-        const destY = 100;        // Đẩy lên trên (Cũ là 80)
+        const destX = 170;       // Đẩy mạnh sang trái (Cũ là 140)
+        const destY = 90;        // Đẩy lên trên (Cũ là 80)
         const destWidth = 320;   // Thu nhỏ một chút để tạo lề trắng bọc quanh viền (Cũ là 320)
         const destHeight = 320;
 
