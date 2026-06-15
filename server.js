@@ -15,7 +15,7 @@ async function prepareGraphicsEngine() {
     if (isGraphicsReady) return;
 
     // Tải WASM module cho Resvg từ CDN để render ảnh PNG trên Cloudflare
-    const wasmRes = await fetch('https://unpkg.com/@resvg/resvg-wasm@3.3.0/index_bg.wasm');
+    const wasmRes = await fetch('https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm');
     const wasmBuffer = await wasmRes.arrayBuffer();
     await initWasm(wasmBuffer);
 
