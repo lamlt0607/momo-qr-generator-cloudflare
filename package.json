@@ -1,7 +1,7 @@
 {
   "name": "momo-qr-generator",
   "version": "1.0.0",
-  "description": "Ứng dụng tạo mã QR MoMo xuất ảnh PNG trên Cloudflare Workers",
+  "description": "Ứng dụng tạo mã QR MoMo định dạng SVG trên Cloudflare Workers",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -9,14 +9,10 @@
     "deploy": "wrangler deploy server.js"
   },
   "dependencies": {
-    "@resvg/resvg-wasm": "^2.6.2",
     "hono": "^4.12.25",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "wrangler": "^3.114.17"
-  },
-  "author": "",
-  "license": "ISC",
-  "keywords": []
+    "wrangle": "^3.114.17"
+  }
 }
