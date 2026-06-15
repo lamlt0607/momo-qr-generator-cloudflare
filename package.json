@@ -9,7 +9,7 @@
     "deploy": "wrangler deploy server.js"
   },
   "dependencies": {
-    "@resvg/resvg-wasm": "^3.3.0",
+    "@resvg/resvg-wasm": "^2.6.2",
     "hono": "^4.12.25",
     "qrcode": "^1.5.4"
   },
