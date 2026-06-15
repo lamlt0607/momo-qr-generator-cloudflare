@@ -4,8 +4,8 @@
   "description": "Ứng dụng tạo mã QR MoMo trên Cloudflare Edge",
   "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "dev": "wrangler dev index.js",
+    "deploy": "wrangler deploy index.js"
   },
   "dependencies": {
     "hono": "^4.0.0",
