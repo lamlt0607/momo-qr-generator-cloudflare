@@ -2,8 +2,3 @@ name = "momo-qr-generator"
 main = "server.js"
 compatibility_date = "2026-06-15"
 compatibility_flags = [ "nodejs_compat" ]
-
-# SỬA THÀNH DẤU NGOẶC VUÔNG ĐÔI [[RULES]] ĐỂ BIẾN THÀNH ARRAY
-[[rules]]
-type = "CompiledWasm"
-globs = ["**/*.wasm"]
