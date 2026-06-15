@@ -2,6 +2,9 @@ import { Hono } from 'hono';
 import QRCode from 'qrcode';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
 
+// Import trực tiếp file .wasm nội bộ của thư viện (Bypass lỗi bảo mật CSP của Cloudflare)
+import wasmModule from '@resvg/resvg-wasm/index_bg.wasm';
+
 const app = new Hono();
 
 // =========================================================
@@ -14,12 +17,10 @@ let fontBold = null;
 async function prepareGraphicsEngine() {
     if (isGraphicsReady) return;
 
-    // Tải WASM module cho Resvg từ CDN để render ảnh PNG trên Cloudflare
-    const wasmRes = await fetch('https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm');
-    const wasmBuffer = await wasmRes.arrayBuffer();
-    await initWasm(wasmBuffer);
+    // Khởi tạo WASM trực tiếp từ module đã đóng gói nội bộ
+    await initWasm(wasmModule);
 
-    // Tải bộ Font chữ chuẩn hỗ trợ tiếng Việt không lỗi dấu khi chuyển sang PNG
+    // Tải bộ Font chữ chuẩn hỗ trợ tiếng Việt không lỗi dấu từ Google CDN tĩnh
     const [regRes, boldRes] = await Promise.all([
         fetch('https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf'), 
         fetch('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc9.ttf') 
@@ -31,7 +32,7 @@ async function prepareGraphicsEngine() {
 }
 
 // =========================================================
-// 1. CÁC HÀM XỬ LÝ DỮ LIỆU MOMO 
+// 1. CÁC HÀM XỬ LÝ DỮ LIỆU MOMO (Chuẩn EMVCo)
 // =========================================================
 function crc16_ccitt_false(str) {
     let crc = 0xFFFF;
@@ -92,7 +93,7 @@ app.get('*', async (c) => {
         const amountParam = url.searchParams.get('amount');
         const amount = amountParam ? parseInt(amountParam, 10) : 0;
 
-        // Chuẩn bị Engine đồ họa 
+        // Kích hoạt Engine đồ họa 
         await prepareGraphicsEngine();
 
         // =========================================================
@@ -101,7 +102,7 @@ app.get('*', async (c) => {
         const frameWidth = 600; 
         const frameHeight = 800;
 
-        // Tọa độ của vùng mã QR (Đã khớp center viền xanh của bạn)
+        // Tọa độ vùng mã QR (Đã khớp center viền xanh của bạn)
         const destX = 125;       
         const destY = 108;        
         const destWidth = 350;   
@@ -124,7 +125,7 @@ app.get('*', async (c) => {
         const cellSize = destWidth / modulesCount;
 
         // =========================================================
-        // KHỞI TẠO SVG GỐC (Dùng font chữ Roboto)
+        // KHỞI TẠO MA TRẬN ĐỒ HỌA SVG (Dùng font chữ Roboto)
         // =========================================================
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${frameWidth} ${frameHeight}" width="${frameWidth}" height="${frameHeight}">`;
 
@@ -171,7 +172,7 @@ app.get('*', async (c) => {
         svg += drawFinderSVG(modulesCount - 7, 0); 
         svg += drawFinderSVG(0, modulesCount - 7); 
 
-        // Lớp 5: Vẽ Logo ôm sát hình chữ nhật (Ôm sát quanh chữ DUREXBOY)
+        // Lớp 5: Vẽ Logo chữ nhật (Ôm sát khít quanh chữ DUREXBOY của bạn)
         const origW = 400; 
         const origH = 100; 
         
@@ -188,7 +189,7 @@ app.get('*', async (c) => {
         svg += `<rect x="${logoX - padding}" y="${logoY - padding}" width="${newLogoWidth + (padding * 2)}" height="${newLogoHeight + (padding * 2)}" fill="#FFFFFF"/>`;
         svg += `<image href="${logoBase64}" x="${logoX}" y="${logoY}" width="${newLogoWidth}" height="${newLogoHeight}"/>`;
 
-        // Lớp 6: Text thông tin
+        // Lớp 6: Text thông tin bên dưới
         let textLines = [
             "Tên chủ TK: LE THANH LAM",
             "Số TK: 0935147989",
@@ -212,7 +213,7 @@ app.get('*', async (c) => {
         svg += `</svg>`;
 
         // =========================================================
-        // BIÊN DỊCH SVG THÀNH FILE ẢNH PNG BẰNG WASM ENGINE
+        // BIÊN DỊCH SVG THÀNH ĐỊNH DẠNG FILE ẢNH PNG
         // =========================================================
         const resvg = new Resvg(svg, {
             fitTo: { mode: 'width', value: frameWidth },
@@ -225,13 +226,13 @@ app.get('*', async (c) => {
 
         const pngBuffer = resvg.render().asPng();
 
-        // Trả về kết quả trực tiếp dạng ảnh PNG cho trình duyệt
+        // Xuất trực tiếp ảnh PNG ra ngoài trình duyệt
         c.header('Content-Type', 'image/png');
         return c.body(pngBuffer);
 
     } catch (error) {
         console.error(error);
-        return c.text('Lỗi: ' + error.message, 500);
+        return c.text('Lỗi hệ thống: ' + error.message, 500);
     }
 });
 
