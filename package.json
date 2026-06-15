@@ -2,7 +2,7 @@
   "name": "momo-qr-generator-edge",
   "version": "1.0.0",
   "description": "Ứng dụng tạo mã QR MoMo trên Cloudflare Edge",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
