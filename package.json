@@ -1,17 +1,22 @@
 {
-  "name": "momo-qr-generator-edge",
+  "name": "momo-qr-generator",
   "version": "1.0.0",
-  "description": "Ứng dụng tạo mã QR MoMo trên Cloudflare Edge",
-  "main": "index.js",
+  "description": "Ứng dụng tạo mã QR MoMo xuất ảnh PNG trên Cloudflare Workers",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "dev": "wrangler dev index.js",
-    "deploy": "wrangler deploy index.js"
+    "dev": "wrangler dev server.js",
+    "deploy": "wrangler deploy server.js"
   },
   "dependencies": {
-    "hono": "^4.0.0",
-    "qrcode": "^1.5.3"
+    "@resvg/resvg-wasm": "^3.3.0",
+    "hono": "^4.12.25",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "wrangler": "^3.0.0"
-  }
+    "wrangler": "^3.114.17"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
 }
