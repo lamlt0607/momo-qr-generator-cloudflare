@@ -66,7 +66,7 @@ app.get('*', async (c) => {
         const amount = amountParam ? parseInt(amountParam, 10) : 0;
 
         // =========================================================
-        // 🛠 KHU VỰC CĂN CHỈNH TỌA ĐỘ
+        // 🛠 KHU VỰC CĂN CHỈNH TỌA ĐỘ (ĐÃ CENTER HOÀN HẢO)
         // =========================================================
         const frameWidth = 600; 
         const frameHeight = 800;
@@ -92,9 +92,15 @@ app.get('*', async (c) => {
         const cellSize = destWidth / modulesCount;
 
         // =========================================================
-        // KHỞI TẠO SVG 
+        // KHỞI TẠO ĐỒ HỌA SVG (Cố định xMidYMin meet để bỏ hẳn padding-top)
         // =========================================================
-        let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${frameWidth} ${frameHeight}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="max-height: 100vh; max-width: 100vw; display: block; margin: 0 auto;">`;
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${frameWidth} ${frameHeight}" width="100%" height="100%" preserveAspectRatio="xMidYMin meet" style="max-height: 100vh; max-width: 100vw; display: block; margin: 0 auto;">`;
+
+        // Nhúng CSS Reset để ép trình duyệt xóa bỏ hoàn toàn khoảng trống lề trên
+        svg += `<style>
+            html, body { margin: 0 !important; padding: 0 !important; overflow: hidden; }
+            svg { margin-top: 0 !important; padding-top: 0 !important; top: 0; position: absolute; }
+        </style>`;
 
         // Lớp 1: Ảnh nền Frame
         svg += `<image href="${frameBase64}" x="0" y="0" width="${frameWidth}" height="${frameHeight}"/>`;
@@ -139,14 +145,10 @@ app.get('*', async (c) => {
         svg += drawFinderSVG(modulesCount - 7, 0); 
         svg += drawFinderSVG(0, modulesCount - 7); 
 
-        // =========================================================
-        // Lớp 5: Vẽ Logo ôm sát hình chữ nhật
-        // =========================================================
-        // Thay vì dùng tỷ lệ vuông, ta thiết lập tỷ lệ hình chữ nhật nằm ngang
-        const origW = 400; // Mô phỏng chiều rộng logo chữ nhật của bạn
-        const origH = 100; // Mô phỏng chiều cao logo chữ nhật của bạn
+        // Lớp 5: Vẽ Logo chữ nhật ôm sát (DUREXBOY)
+        const origW = 400; 
+        const origH = 100; 
         
-        // Vì logo dạng dài, ta cho phép nó chiếm tối đa 40% chiều rộng của QR Code
         const maxLogoWidth = destWidth * 0.40; 
         const scale = maxLogoWidth / origW;
         
@@ -155,18 +157,12 @@ app.get('*', async (c) => {
 
         const logoX = destX + (destWidth - newLogoWidth) / 2;
         const logoY = destY + (destHeight - newLogoHeight) / 2;
-        
-        // Khoảng cách từ chữ ra lề trắng
         const padding = 6; 
 
-        // Nền trắng cho logo bây giờ sẽ ôm sát theo khối chữ nhật
         svg += `<rect x="${logoX - padding}" y="${logoY - padding}" width="${newLogoWidth + (padding * 2)}" height="${newLogoHeight + (padding * 2)}" fill="#FFFFFF"/>`;
-        // Ảnh logo
         svg += `<image href="${logoBase64}" x="${logoX}" y="${logoY}" width="${newLogoWidth}" height="${newLogoHeight}"/>`;
 
-        // =========================================================
         // Lớp 6: Text thông tin
-        // =========================================================
         let textLines = [
             "Tên chủ TK: LE THANH LAM",
             "Số TK: 0935147989",
@@ -189,7 +185,7 @@ app.get('*', async (c) => {
 
         svg += `</svg>`;
 
-        // Trả về kết quả
+        // Trả về kết quả dạng ảnh Vector tĩnh (Siêu nhẹ, bám biên trên cùng)
         c.header('Content-Type', 'image/svg+xml');
         return c.body(svg);
 
