@@ -1,4 +1,10 @@
 name = "momo-qr-generator"
-main = "server.js" 
+main = "server.js"
 compatibility_date = "2026-06-15"
 compatibility_flags = [ "nodejs_compat" ]
+
+# THÊM ĐOẠN NÀY ĐỂ CHẠY ĐƯỢC ẢNH PNG (WASM)
+[rules]
+modules = [
+  { type = "CompiledWasm", separators = [], globs = ["**/*.wasm"] }
+]
