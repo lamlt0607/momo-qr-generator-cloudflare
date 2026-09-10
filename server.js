@@ -91,11 +91,11 @@ app.get('*', async (c) => {
         const frameHeight = 710; // Đã cập nhật kích thước chuẩn của bạn
 
         const destX = 125;       
-        const destY = 108;        
+        const destY = 64;        
         const destWidth = 350;   
         const destHeight = 350;
 
-        let textStartY = 590;    
+        let textStartY = 526;    
         const lineSpacing = 30;  
 
         // ⚠️ Thay bằng chuỗi Base64 thật của bạn ở đây
