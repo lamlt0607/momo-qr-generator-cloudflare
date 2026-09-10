@@ -23,7 +23,7 @@ async function getFont() {
 }
 
 // =========================================================
-// 1. CÁC HÀM XỬ LÝ DỮ LIỆU MOMO (Giữ nguyên)
+// 1. CÁC HÀM XỬ LÝ DỮ LIỆU MOMO
 // =========================================================
 function crc16_ccitt_false(str) {
     let crc = 0xFFFF;
@@ -88,7 +88,7 @@ app.get('*', async (c) => {
         // 🛠 KHU VỰC CĂN CHỈNH TỌA ĐỘ
         // =========================================================
         const frameWidth = 600; 
-        const frameHeight = 800;
+        const frameHeight = 710; // Đã cập nhật kích thước chuẩn của bạn
 
         const destX = 125;       
         const destY = 108;        
@@ -108,7 +108,7 @@ app.get('*', async (c) => {
         const modulesCount = qrData.modules.size;
         const cellSize = destWidth / modulesCount;
 
-        // Xây dựng chuỗi SVG
+        // Xây dựng chuỗi SVG chuẩn 1.1 (đã bỏ thẻ lót nền trắng)
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${frameWidth} ${frameHeight}" width="${frameWidth}" height="${frameHeight}">`;
 
         svg += `<image xlink:href="${frameBase64}" x="0" y="0" width="${frameWidth}" height="${frameHeight}"/>`;
@@ -191,20 +191,20 @@ app.get('*', async (c) => {
         // 3. CHUYỂN ĐỔI SVG THÀNH FILE PNG TRỰC TIẾP
         // =========================================================
         
-        // Load engine Wasm (Chỉ chạy 1 lần)
+        // Load engine Wasm
         if (!wasmInitialized) {
             await initWasm(resvgWasm);
             wasmInitialized = true;
         }
 
-        // Lấy font dữ liệu (Cache lại để không phải gọi API liên tục)
+        // Load Font
         const fontData = await getFont();
 
         // Render SVG qua Resvg
         const resvg = new Resvg(svg, {
             fitTo: { mode: 'width', value: frameWidth },
             font: {
-                fontBuffers: [fontData],     // SỬA TẠI ĐÂY: Đổi từ fontFiles thành fontBuffers
+                fontBuffers: [fontData],     
                 loadSystemFonts: false,      
                 defaultFontFamily: 'Roboto', 
             }
@@ -213,7 +213,7 @@ app.get('*', async (c) => {
         const pngData = resvg.render();
         const pngBuffer = pngData.asPng();
 
-        // Trả về luồng ảnh chuẩn PNG
+        // Output
         c.header('Content-Type', 'image/png');
         c.header('Cache-Control', 'public, max-age=31536000'); 
         return c.body(pngBuffer);
