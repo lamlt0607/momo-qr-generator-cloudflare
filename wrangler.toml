@@ -2,3 +2,8 @@ name = "momo-qr-generator"
 main = "server.js"
 compatibility_date = "2026-06-15"
 compatibility_flags = [ "nodejs_compat" ]
+
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = true
